@@ -1,0 +1,119 @@
+import { useAuth } from '@/hooks/useAuth'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LogOut, Wallet } from 'lucide-react'
+
+export default function Dashboard() {
+  const { user, signOut } = useAuth()
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <Wallet className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold">Money Manager</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              {user?.user_metadata?.full_name || user?.email}
+            </span>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              ออกจากระบบ
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="mb-8 text-3xl font-bold">
+          สวัสดี, {user?.user_metadata?.full_name || 'ผู้ใช้'}!
+        </h1>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Net Worth Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                มูลค่าสุทธิ
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">฿0.00</div>
+              <p className="text-xs text-muted-foreground">
+                สินทรัพย์ - หนี้สิน
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Income Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                รายได้เดือนนี้
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-income">฿0.00</div>
+              <p className="text-xs text-muted-foreground">
+                ยังไม่มีรายการ
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Expense Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                รายจ่ายเดือนนี้
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-expense">฿0.00</div>
+              <p className="text-xs text-muted-foreground">
+                ยังไม่มีรายการ
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Savings Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                เงินออมเดือนนี้
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-investment">฿0.00</div>
+              <p className="text-xs text-muted-foreground">
+                รายได้ - รายจ่าย
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Coming Soon Section */}
+        <div className="mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>เร็วๆ นี้</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                ฟีเจอร์เพิ่มเติมกำลังมา... รวมถึงการจัดการบัญชี, บันทึกรายรับ-รายจ่าย,
+                งบประมาณ, เป้าหมายการออม, และอีกมากมาย!
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  )
+}
