@@ -1,39 +1,14 @@
 import { useAuth } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogOut, Wallet } from 'lucide-react'
+import { DashboardLayout } from '@/components/layout'
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth()
-
-  const handleSignOut = async () => {
-    await signOut()
-  }
+  const { user } = useAuth()
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Wallet className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Money Manager</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {user?.user_metadata?.full_name || user?.email}
-            </span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" />
-              ออกจากระบบ
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-3xl font-bold">
+    <DashboardLayout>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">
           สวัสดี, {user?.user_metadata?.full_name || 'ผู้ใช้'}!
         </h1>
 
@@ -100,20 +75,18 @@ export default function Dashboard() {
         </div>
 
         {/* Coming Soon Section */}
-        <div className="mt-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>เร็วๆ นี้</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                ฟีเจอร์เพิ่มเติมกำลังมา... รวมถึงการจัดการบัญชี, บันทึกรายรับ-รายจ่าย,
-                งบประมาณ, เป้าหมายการออม, และอีกมากมาย!
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>เร็วๆ นี้</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              ฟีเจอร์เพิ่มเติมกำลังมา... รวมถึงการจัดการบัญชี, บันทึกรายรับ-รายจ่าย,
+              งบประมาณ, เป้าหมายการออม, และอีกมากมาย!
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   )
 }

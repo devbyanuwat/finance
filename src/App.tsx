@@ -1,38 +1,63 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/components/providers'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { ProtectedRoute } from '@/components/auth'
+import { Login, Signup, Dashboard, Accounts, Categories, Transactions } from '@/pages'
 
 function App() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto py-10">
-        <div className="flex flex-col items-center justify-center space-y-6">
-          <h1 className="text-4xl font-bold">Money Manager</h1>
-          <p className="text-muted-foreground">
-            Personal finance management made simple
-          </p>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          <div className="flex gap-4">
-            <Button>Get Started</Button>
-            <Button variant="outline">Learn More</Button>
-          </div>
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accounts"
+              element={
+                <ProtectedRoute>
+                  <Accounts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/categories"
+              element={
+                <ProtectedRoute>
+                  <Categories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <Transactions />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Test custom colors */}
-          <div className="flex gap-2 mt-8">
-            <span className="px-3 py-1 rounded-full bg-income text-white text-sm">
-              Income
-            </span>
-            <span className="px-3 py-1 rounded-full bg-expense text-white text-sm">
-              Expense
-            </span>
-            <span className="px-3 py-1 rounded-full bg-investment text-white text-sm">
-              Investment
-            </span>
-            <span className="px-3 py-1 rounded-full bg-goal text-white text-sm">
-              Goal
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+
+          <Toaster position="top-center" richColors />
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
 

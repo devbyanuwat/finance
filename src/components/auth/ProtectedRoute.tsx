@@ -1,8 +1,13 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 
-export function ProtectedRoute() {
+interface ProtectedRouteProps {
+  children: ReactNode
+}
+
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
@@ -17,5 +22,5 @@ export function ProtectedRoute() {
     return <Navigate to="/login" replace />
   }
 
-  return <Outlet />
+  return <>{children}</>
 }
