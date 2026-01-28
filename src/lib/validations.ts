@@ -64,3 +64,14 @@ export const transactionSchema = z.object({
 })
 
 export type TransactionFormData = z.infer<typeof transactionSchema>
+
+// Budget validation
+export const budgetSchema = z.object({
+  category_id: z.string().min(1, 'กรุณาเลือกหมวดหมู่'),
+  amount: z.number().positive('จำนวนเงินต้องมากกว่า 0'),
+  period: z.enum(['monthly', 'yearly']),
+  alert_threshold: z.number().min(0).max(100),
+  start_date: z.date().nullable().optional(),
+})
+
+export type BudgetFormData = z.infer<typeof budgetSchema>

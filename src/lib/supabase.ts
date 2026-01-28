@@ -13,3 +13,23 @@ export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key'
 )
+
+// Create a Supabase client with custom access token from Clerk
+export const createClerkSupabaseClient = (getToken: () => Promise<string | null>) => {
+  return createClient(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseAnonKey || 'placeholder-key',
+    {
+      global: {
+        fetch: async (url, options = {}) => {
+          const clerkToken = await getToken()
+          const headers = new Headers(options.headers)
+          if (clerkToken) {
+            headers.set('Authorization', `Bearer ${clerkToken}`)
+          }
+          return fetch(url, { ...options, headers })
+        },
+      },
+    }
+  )
+}

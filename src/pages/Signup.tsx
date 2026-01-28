@@ -1,12 +1,14 @@
-import { AuthCard, SignupForm } from '@/components/auth'
+import { SignUp } from '@clerk/clerk-react'
 
 export default function Signup() {
   return (
-    <AuthCard
-      title="สร้างบัญชีใหม่"
-      description="เริ่มต้นจัดการการเงินของคุณวันนี้"
-    >
-      <SignupForm />
-    </AuthCard>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <SignUp
+        routing="path"
+        path="/signup"
+        signInUrl="/login"
+        forceRedirectUrl="/dashboard"
+      />
+    </div>
   )
 }

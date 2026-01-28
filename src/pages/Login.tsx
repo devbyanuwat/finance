@@ -1,12 +1,14 @@
-import { AuthCard, LoginForm } from '@/components/auth'
+import { SignIn } from '@clerk/clerk-react'
 
 export default function Login() {
   return (
-    <AuthCard
-      title="เข้าสู่ระบบ Money Manager"
-      description="จัดการการเงินของคุณอย่างชาญฉลาด"
-    >
-      <LoginForm />
-    </AuthCard>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <SignIn
+        routing="path"
+        path="/login"
+        signUpUrl="/signup"
+        forceRedirectUrl="/dashboard"
+      />
+    </div>
   )
 }

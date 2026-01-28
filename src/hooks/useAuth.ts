@@ -1,10 +1,25 @@
-import { useContext } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
+import { useUser, useClerk } from '@clerk/clerk-react'
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+  const { user, isLoaded, isSignedIn } = useUser()
+  const { signOut } = useClerk()
+
+  // Map Clerk user to a compatible format
+  const mappedUser = user
+    ? {
+        id: user.id,
+        email: user.primaryEmailAddress?.emailAddress ?? null,
+        user_metadata: {
+          full_name: user.fullName ?? user.firstName ?? 'ผู้ใช้',
+          avatar_url: user.imageUrl,
+        },
+      }
+    : null
+
+  return {
+    user: mappedUser,
+    isLoading: !isLoaded,
+    isAuthenticated: !!isSignedIn,
+    signOut: () => signOut({ redirectUrl: '/login' }),
   }
-  return context
 }

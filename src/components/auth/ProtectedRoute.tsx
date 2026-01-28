@@ -1,16 +1,16 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { useAuth } from '@clerk/clerk-react'
 import { Loader2 } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
 
 interface ProtectedRouteProps {
   children: ReactNode
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isLoaded, isSignedIn } = useAuth()
 
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -18,7 +18,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     )
   }
 
-  if (!isAuthenticated) {
+  if (!isSignedIn) {
     return <Navigate to="/login" replace />
   }
 
