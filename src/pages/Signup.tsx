@@ -105,20 +105,25 @@ export default function Signup() {
 
       if (signUpError) throw signUpError
 
-      // Step 2: Create profile manually (since trigger is disabled)
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: authData.user.email,
-            full_name: fullName || 'ผู้ใช้',
-            avatar_url: null,
-          })
+      if (!authData.user) {
+        throw new Error('ไม่สามารถสร้างบัญชีได้')
+      }
 
-        if (profileError) {
+      // Step 2: Create profile manually (since trigger is disabled)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email: authData.user.email,
+          full_name: fullName || 'ผู้ใช้',
+          avatar_url: null,
+        })
+
+      if (profileError) {
+        // If profile already exists, that's ok
+        if (profileError.code !== '23505') {
           console.error('Profile creation error:', profileError)
-          // Don't throw error, just log it as profile might already exist
+          throw new Error('ไม่สามารถสร้างโปรไฟล์ได้: ' + profileError.message)
         }
       }
 
