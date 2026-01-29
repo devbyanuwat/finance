@@ -89,7 +89,7 @@ export function useBudgets() {
       .eq('user_id', user.id)
       .eq('category_id', data.category_id)
       .eq('period', data.period)
-      .single()
+      .maybeSingle()
 
     if (existing) {
       throw new Error('มีงบประมาณสำหรับหมวดหมู่นี้อยู่แล้ว')
