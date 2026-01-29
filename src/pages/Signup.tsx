@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { Loader2, RefreshCw, Eye, EyeOff, CheckCircle2, XCircle } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 // Password validation function
 const validatePassword = (password: string) => {

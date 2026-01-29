@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { User } from '@supabase/supabase-js'
 import { useNavigate } from 'react-router-dom'
 
 interface AuthUser {
