@@ -1,13 +1,44 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from './useSupabase'
 import { useAuth } from './useAuth'
 import type { Budget, BudgetInsert, BudgetUpdate, BudgetWithCategory } from '@/types/database.types'
 
 export function useBudgets() {
   const { user } = useAuth()
+  const supabase = useSupabase()
   const [budgets, setBudgets] = useState<BudgetWithCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Calculate spent amount for a budget based on period
+  const calculateSpent = useCallback(async (budget: Budget): Promise<number> => {
+    if (!user) return 0
+
+    const now = new Date()
+    let startDate: Date
+    let endDate: Date
+
+    if (budget.period === 'monthly') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    } else {
+      startDate = new Date(now.getFullYear(), 0, 1)
+      endDate = new Date(now.getFullYear(), 11, 31)
+    }
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('amount')
+      .eq('user_id', user.id)
+      .eq('category_id', budget.category_id)
+      .eq('type', 'expense')
+      .gte('transaction_date', startDate.toISOString().split('T')[0])
+      .lte('transaction_date', endDate.toISOString().split('T')[0])
+
+    if (error) return 0
+
+    return (data || []).reduce((sum, t) => sum + t.amount, 0)
+  }, [user, supabase])
 
   const fetchBudgets = useCallback(async () => {
     if (!user) return
@@ -42,37 +73,7 @@ export function useBudgets() {
     } finally {
       setIsLoading(false)
     }
-  }, [user])
-
-  // Calculate spent amount for a budget based on period
-  const calculateSpent = async (budget: Budget): Promise<number> => {
-    if (!user) return 0
-
-    const now = new Date()
-    let startDate: Date
-    let endDate: Date
-
-    if (budget.period === 'monthly') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    } else {
-      startDate = new Date(now.getFullYear(), 0, 1)
-      endDate = new Date(now.getFullYear(), 11, 31)
-    }
-
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('amount')
-      .eq('user_id', user.id)
-      .eq('category_id', budget.category_id)
-      .eq('type', 'expense')
-      .gte('transaction_date', startDate.toISOString().split('T')[0])
-      .lte('transaction_date', endDate.toISOString().split('T')[0])
-
-    if (error) return 0
-
-    return (data || []).reduce((sum, t) => sum + t.amount, 0)
-  }
+  }, [user, supabase, calculateSpent])
 
   useEffect(() => {
     fetchBudgets()

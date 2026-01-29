@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from './useSupabase'
 import { useAuth } from './useAuth'
 import type { TransactionWithRelations, BudgetWithCategory, Account } from '@/types/database.types'
 
@@ -29,6 +29,7 @@ interface DashboardData {
 
 export function useDashboard() {
   const { user } = useAuth()
+  const supabase = useSupabase()
   const [data, setData] = useState<DashboardData>({
     totalBalance: 0,
     monthlyIncome: 0,
@@ -194,7 +195,7 @@ export function useDashboard() {
     } finally {
       setIsLoading(false)
     }
-  }, [user])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchDashboardData()

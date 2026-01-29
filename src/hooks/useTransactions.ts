@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from './useSupabase'
 import { useAuth } from './useAuth'
 import type { Transaction, TransactionInsert, TransactionUpdate, TransactionType, TransactionWithRelations } from '@/types/database.types'
 
@@ -14,6 +14,7 @@ export interface TransactionFilters {
 
 export function useTransactions(filters?: TransactionFilters) {
   const { user } = useAuth()
+  const supabase = useSupabase()
   const [transactions, setTransactions] = useState<TransactionWithRelations[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -71,7 +72,7 @@ export function useTransactions(filters?: TransactionFilters) {
     } finally {
       setIsLoading(false)
     }
-  }, [user, filters?.type, filters?.account_id, filters?.category_id, filters?.startDate, filters?.endDate, filters?.search])
+  }, [user, supabase, filters?.type, filters?.account_id, filters?.category_id, filters?.startDate, filters?.endDate, filters?.search])
 
   useEffect(() => {
     fetchTransactions()

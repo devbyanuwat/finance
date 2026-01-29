@@ -1,25 +1,63 @@
-import { useUser, useClerk } from '@clerk/clerk-react'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { User } from '@supabase/supabase-js'
+import { useNavigate } from 'react-router-dom'
+
+interface AuthUser {
+  id: string
+  email: string | null
+  user_metadata: {
+    full_name?: string
+    avatar_url?: string
+  }
+}
 
 export function useAuth() {
-  const { user, isLoaded, isSignedIn } = useUser()
-  const { signOut } = useClerk()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
 
-  // Map Clerk user to a compatible format
-  const mappedUser = user
-    ? {
-        id: user.id,
-        email: user.primaryEmailAddress?.emailAddress ?? null,
-        user_metadata: {
-          full_name: user.fullName ?? user.firstName ?? 'ผู้ใช้',
-          avatar_url: user.imageUrl,
-        },
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? null,
+          user_metadata: session.user.user_metadata || {},
+        })
       }
-    : null
+      setIsLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? null,
+          user_metadata: session.user.user_metadata || {},
+        })
+      } else {
+        setUser(null)
+      }
+      setIsLoading(false)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
+    navigate('/login')
+  }
 
   return {
-    user: mappedUser,
-    isLoading: !isLoaded,
-    isAuthenticated: !!isSignedIn,
-    signOut: () => signOut({ redirectUrl: '/login' }),
+    user,
+    isLoading,
+    isAuthenticated: !!user,
+    signOut,
   }
 }

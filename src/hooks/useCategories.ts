@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from './useSupabase'
 import { useAuth } from './useAuth'
 import type { Category, CategoryInsert, CategoryUpdate, CategoryType } from '@/types/database.types'
 
 export function useCategories(filterType?: CategoryType) {
   const { user } = useAuth()
+  const supabase = useSupabase()
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,7 +36,7 @@ export function useCategories(filterType?: CategoryType) {
     } finally {
       setIsLoading(false)
     }
-  }, [filterType])
+  }, [filterType, supabase])
 
   useEffect(() => {
     fetchCategories()

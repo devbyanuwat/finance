@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useSupabase } from './useSupabase'
 import { useAuth } from './useAuth'
 import type { Account, AccountInsert, AccountUpdate } from '@/types/database.types'
 
 export function useAccounts() {
   const { user } = useAuth()
+  const supabase = useSupabase()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +31,7 @@ export function useAccounts() {
     } finally {
       setIsLoading(false)
     }
-  }, [user])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchAccounts()
