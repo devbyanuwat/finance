@@ -1,4 +1,4 @@
-import { Menu, LogOut } from 'lucide-react'
+import { Menu, Bell, LogOut } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { ThemeToggle } from './ThemeToggle'
 
 interface NavbarProps {
   onMenuClick: () => void
@@ -22,7 +21,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const userInitial = user?.user_metadata?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="flex items-center justify-between px-4 py-4 md:px-6 lg:px-8">
       <Button
         variant="ghost"
         size="icon"
@@ -33,12 +32,14 @@ export function Navbar({ onMenuClick }: NavbarProps) {
         <span className="sr-only">เปิดเมนู</span>
       </Button>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xl font-bold text-primary">Money Manager</span>
-      </div>
+      <div className="hidden md:block" />
 
       <div className="ml-auto flex items-center gap-2">
-        <ThemeToggle />
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          <span className="sr-only">การแจ้งเตือน</span>
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full" aria-label="เมนู">

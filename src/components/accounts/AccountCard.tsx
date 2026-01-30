@@ -53,7 +53,7 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
   const isCreditCard = account.type === 'credit_card'
 
   return (
-    <Card className={cn('relative hover:shadow-md transition-shadow', !account.is_active && 'opacity-60')}>
+    <Card className={cn('relative hover:shadow-card-hover transition-shadow', !account.is_active && 'opacity-60')}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

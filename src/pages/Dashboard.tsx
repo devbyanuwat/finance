@@ -6,10 +6,11 @@ import {
   PiggyBank,
   AlertTriangle,
   ArrowRight,
+  Plus,
 } from 'lucide-react'
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -56,13 +57,13 @@ export default function Dashboard() {
       <DashboardLayout>
         <div className="space-y-6">
           <Skeleton className="h-10 w-64" />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-32" />
-            ))}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Skeleton className="h-40" />
+            <Skeleton className="h-40" />
+            <Skeleton className="h-40" />
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Skeleton className="h-80" />
+          <div className="grid gap-4 md:grid-cols-3">
+            <Skeleton className="col-span-2 h-80" />
             <Skeleton className="h-80" />
           </div>
         </div>
@@ -76,115 +77,184 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-2xl font-bold">
               สวัสดี, {user?.user_metadata?.full_name || 'ผู้ใช้'}!
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               ภาพรวมการเงินของคุณในเดือนนี้
             </p>
           </div>
+          <Button asChild className="rounded-full">
+            <Link to="/transactions">
+              <Plus className="mr-2 h-4 w-4" />
+              เพิ่มรายการ
+            </Link>
+          </Button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">ยอดรวมทั้งหมด</CardTitle>
-              <Wallet className="h-4 w-4 text-muted-foreground" />
+        {/* Row 1: Balance + Stats + Accounts */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {/* Balance Card (dark bg) */}
+          <Card className="bg-primary text-primary-foreground">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-primary-foreground/80">
+                ยอดรวมทั้งหมด
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold tabular-nums">{formatCurrency(totalBalance)}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-3xl font-bold tabular-nums">
+                {formatCurrency(totalBalance)}
+              </div>
+              <p className="mt-1 text-sm text-primary-foreground/70">
                 จาก {accounts.length} บัญชี
               </p>
+              <div className="mt-4 flex gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  asChild
+                  className="rounded-full text-xs"
+                >
+                  <Link to="/transactions">ดูรายการ</Link>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  asChild
+                  className="rounded-full text-xs"
+                >
+                  <Link to="/accounts">ดูบัญชี</Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Income / Expense / Savings stacked */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">รายได้เดือนนี้</CardTitle>
-              <TrendingUp className="h-4 w-4 text-income" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-income tabular-nums">
-                {formatCurrency(monthlyIncome)}
+            <CardContent className="flex h-full flex-col justify-center divide-y p-5">
+              <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-income" />
+                  <span className="text-sm text-muted-foreground">รายได้</span>
+                </div>
+                <span className="font-bold text-income tabular-nums">
+                  {formatCurrency(monthlyIncome)}
+                </span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                +{recentTransactions.filter((t) => t.type === 'income').length} รายการ
-              </p>
+              <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-2">
+                  <TrendingDown className="h-4 w-4 text-expense" />
+                  <span className="text-sm text-muted-foreground">รายจ่าย</span>
+                </div>
+                <span className="font-bold text-expense tabular-nums">
+                  {formatCurrency(monthlyExpense)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-2">
+                  <PiggyBank className="h-4 w-4 text-investment" />
+                  <span className="text-sm text-muted-foreground">เงินออม</span>
+                </div>
+                <span
+                  className={`font-bold tabular-nums ${
+                    monthlySavings >= 0 ? 'text-income' : 'text-expense'
+                  }`}
+                >
+                  {formatCurrency(monthlySavings)}
+                </span>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Accounts overview */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">รายจ่ายเดือนนี้</CardTitle>
-              <TrendingDown className="h-4 w-4 text-expense" />
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium">บัญชีของฉัน</CardTitle>
+                <Button variant="ghost" size="sm" asChild className="text-xs">
+                  <Link to="/accounts">
+                    ดูทั้งหมด <ArrowRight className="ml-1 h-3 w-3" />
+                  </Link>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-expense tabular-nums">
-                {formatCurrency(monthlyExpense)}
+              <div className="space-y-3">
+                {accounts.slice(0, 3).map((account) => (
+                  <div key={account.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Wallet className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{account.name}</span>
+                    </div>
+                    <span className="text-sm font-medium tabular-nums">
+                      {formatCurrency(account.balance)}
+                    </span>
+                  </div>
+                ))}
+                {accounts.length === 0 && (
+                  <p className="text-sm text-muted-foreground">ยังไม่มีบัญชี</p>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground">
-                {recentTransactions.filter((t) => t.type === 'expense').length} รายการ
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">เงินออมเดือนนี้</CardTitle>
-              <PiggyBank className="h-4 w-4 text-investment" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-2xl font-bold tabular-nums ${
-                  monthlySavings >= 0 ? 'text-income' : 'text-expense'
-                }`}
-              >
-                {formatCurrency(monthlySavings)}
-              </div>
-              <p className="text-xs text-muted-foreground">รายได้ - รายจ่าย</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Charts Section */}
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Monthly Trend Chart */}
-          <Card>
+        {/* Row 2: AreaChart (2/3) + PieChart (1/3) */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {/* Monthly Trend AreaChart */}
+          <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>แนวโน้มรายรับ-รายจ่าย</CardTitle>
               <CardDescription>6 เดือนย้อนหลัง</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="month" className="text-xs" />
-                    <YAxis tickFormatter={formatChartValue} className="text-xs" />
+                  <AreaChart data={monthlyTrend}>
+                    <defs>
+                      <linearGradient id="gradientIncome" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--income))" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="hsl(var(--income))" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="gradientExpense" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--expense))" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="hsl(var(--expense))" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-muted" />
+                    <XAxis dataKey="month" className="text-xs" axisLine={false} tickLine={false} />
+                    <YAxis tickFormatter={formatChartValue} className="text-xs" axisLine={false} tickLine={false} />
                     <Tooltip
                       formatter={(value: number) => formatCurrency(value)}
                       labelStyle={{ color: 'hsl(var(--foreground))' }}
                       contentStyle={{
                         backgroundColor: 'hsl(var(--background))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
+                        border: 'none',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgb(0 0 0 / 0.1)',
                       }}
                     />
-                    <Bar
+                    <Area
+                      type="monotone"
                       dataKey="income"
                       name="รายได้"
-                      fill="hsl(var(--income))"
-                      radius={[4, 4, 0, 0]}
+                      stroke="hsl(var(--income))"
+                      strokeWidth={2.5}
+                      fill="url(#gradientIncome)"
+                      dot={{ fill: '#fff', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
                     />
-                    <Bar
+                    <Area
+                      type="monotone"
                       dataKey="expense"
                       name="รายจ่าย"
-                      fill="hsl(var(--expense))"
-                      radius={[4, 4, 0, 0]}
+                      stroke="hsl(var(--expense))"
+                      strokeWidth={2.5}
+                      fill="url(#gradientExpense)"
+                      dot={{ fill: '#fff', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
                     />
-                  </BarChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
@@ -193,11 +263,11 @@ export default function Dashboard() {
           {/* Category Spending Pie Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>สัดส่วนรายจ่ายตามหมวดหมู่</CardTitle>
+              <CardTitle>สัดส่วนรายจ่าย</CardTitle>
               <CardDescription>เดือนนี้</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-72">
                 {categorySpending.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -223,8 +293,9 @@ export default function Dashboard() {
                         formatter={(value: number) => formatCurrency(value)}
                         contentStyle={{
                           backgroundColor: 'hsl(var(--background))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '8px',
+                          border: 'none',
+                          borderRadius: '12px',
+                          boxShadow: '0 4px 12px rgb(0 0 0 / 0.1)',
                         }}
                       />
                     </PieChart>
@@ -239,7 +310,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Budget Alerts & Recent Transactions */}
+        {/* Row 3: Budget Alerts + Recent Transactions */}
         <div className="grid gap-4 md:grid-cols-2">
           {/* Budget Alerts */}
           <Card>
@@ -367,29 +438,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>ทางลัด</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" asChild>
-                <Link to="/transactions">+ เพิ่มรายการ</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/accounts">จัดการบัญชี</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/budgets">ดูงบประมาณ</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/categories">จัดการหมวดหมู่</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </DashboardLayout>
   )

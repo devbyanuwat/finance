@@ -38,7 +38,7 @@ export function TransactionCard({
   }
 
   return (
-    <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 transition-colors">
+    <div className="flex items-center justify-between rounded-2xl border p-3 hover:bg-muted/50 transition-colors">
       <div className="flex items-center gap-3">
         {/* Icon */}
         <div

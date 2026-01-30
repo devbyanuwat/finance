@@ -96,7 +96,7 @@ export default function Categories() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">หมวดหมู่</h1>
+          <h1 className="text-2xl font-bold">หมวดหมู่</h1>
           <Button onClick={() => handleCreate(defaultType)}>
             <Plus className="mr-2 h-4 w-4" />
             เพิ่มหมวดหมู่

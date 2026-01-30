@@ -9,7 +9,7 @@ function Skeleton({
       role="status"
       aria-busy="true"
       aria-label="กำลังโหลด"
-      className={cn("animate-pulse rounded-md bg-muted", className)}
+      className={cn("animate-pulse rounded-2xl bg-muted", className)}
       {...props}
     />
   )

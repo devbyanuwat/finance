@@ -8,8 +8,28 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function ThemeToggle() {
-  const { setTheme } = useTheme()
+interface ThemeToggleProps {
+  variant?: 'header' | 'sidebar'
+}
+
+export function ThemeToggle({ variant = 'header' }: ThemeToggleProps) {
+  const { theme, setTheme } = useTheme()
+
+  if (variant === 'sidebar') {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="w-full justify-start gap-3 px-4 py-2.5 text-sidebar-muted hover:bg-white/10 hover:text-sidebar-foreground rounded-xl"
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      >
+        <Sun className="h-5 w-5 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100 ml-0" />
+        <span className="dark:hidden">สว่าง</span>
+        <span className="hidden dark:inline">มืด</span>
+      </Button>
+    )
+  }
 
   return (
     <DropdownMenu>

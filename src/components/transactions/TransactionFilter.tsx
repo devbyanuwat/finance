@@ -1,4 +1,5 @@
 import { Search, X } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,6 +37,7 @@ export function TransactionFilter({
   }
 
   return (
+    <Card className="p-4">
     <div className="flex flex-wrap gap-3">
       {/* Search */}
       <div className="relative flex-1 min-w-[200px]">
@@ -126,5 +128,6 @@ export function TransactionFilter({
         </Button>
       )}
     </div>
+    </Card>
   )
 }
