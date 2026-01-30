@@ -36,10 +36,17 @@ export function BudgetProgress({
           {isOverBudget ? 'เกินงบ!' : isNearThreshold ? 'ใกล้ถึงขีดจำกัด' : ''}
         </span>
       </div>
-      <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
+      <div
+        role="progressbar"
+        aria-valuenow={Math.round(percentage)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`งบประมาณใช้ไป ${percentage.toFixed(0)}%`}
+        className="relative h-3 w-full overflow-hidden rounded-full bg-secondary"
+      >
         <div
           className={cn(
-            'h-full rounded-full transition-all duration-300',
+            'h-full rounded-full transition-[width] duration-300',
             isOverBudget
               ? 'bg-destructive'
               : isNearThreshold

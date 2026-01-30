@@ -99,13 +99,15 @@ export function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>ประเภท</FormLabel>
-              <div className="grid grid-cols-3 gap-2">
+              <div role="radiogroup" aria-label="ประเภทรายการ" className="grid grid-cols-3 gap-2">
                 {transactionTypes.map((type) => {
                   const Icon = type.icon
                   return (
                     <Button
                       key={type.value}
                       type="button"
+                      role="radio"
+                      aria-checked={field.value === type.value}
                       variant={field.value === type.value ? 'default' : 'outline'}
                       className={cn(
                         'flex flex-col h-auto py-3',
@@ -148,7 +150,8 @@ export function TransactionForm({
                   type="number"
                   step="0.01"
                   placeholder="0.00"
-                  className="text-xl font-bold"
+                  inputMode="decimal"
+                  className="text-xl font-bold tabular-nums"
                   {...field}
                   onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                 />

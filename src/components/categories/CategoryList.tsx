@@ -47,7 +47,7 @@ export function CategoryList({
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
-        <Card key={category.id} className="relative">
+        <Card key={category.id} className="relative hover:shadow-md transition-shadow">
           <CardContent className="flex items-center justify-between p-3">
             <div className="flex items-center gap-3">
               <div

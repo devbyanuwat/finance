@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { DashboardLayout } from '@/components/layout'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Dialog,
@@ -95,10 +97,45 @@ export default function Categories() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">หมวดหมู่</h1>
+          <Button onClick={() => handleCreate(defaultType)}>
+            <Plus className="mr-2 h-4 w-4" />
+            เพิ่มหมวดหมู่
+          </Button>
         </div>
 
+        {/* Summary Cards */}
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            <Skeleton className="h-24" />
+            <Skeleton className="h-24" />
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">หมวดหมู่รายจ่าย</CardTitle>
+                <TrendingDown className="h-4 w-4 text-expense" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold tabular-nums">{expenseCategories.length}</div>
+                <p className="text-xs text-muted-foreground">หมวดหมู่</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">หมวดหมู่รายได้</CardTitle>
+                <TrendingUp className="h-4 w-4 text-income" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold tabular-nums">{incomeCategories.length}</div>
+                <p className="text-xs text-muted-foreground">หมวดหมู่</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Tabs */}
-        <Tabs defaultValue="expense" className="space-y-4">
+        <Tabs defaultValue="expense" onValueChange={(v) => setDefaultType(v as 'income' | 'expense')} className="space-y-4">
           <TabsList>
             <TabsTrigger value="expense" className="text-expense">
               รายจ่าย ({expenseCategories.length})
@@ -109,12 +146,6 @@ export default function Categories() {
           </TabsList>
 
           <TabsContent value="expense" className="space-y-4">
-            <div className="flex justify-end">
-              <Button onClick={() => handleCreate('expense')}>
-                <Plus className="mr-2 h-4 w-4" />
-                เพิ่มหมวดหมู่รายจ่าย
-              </Button>
-            </div>
             <CategoryList
               categories={expenseCategories}
               isLoading={isLoading}
@@ -124,12 +155,6 @@ export default function Categories() {
           </TabsContent>
 
           <TabsContent value="income" className="space-y-4">
-            <div className="flex justify-end">
-              <Button onClick={() => handleCreate('income')}>
-                <Plus className="mr-2 h-4 w-4" />
-                เพิ่มหมวดหมู่รายได้
-              </Button>
-            </div>
             <CategoryList
               categories={incomeCategories}
               isLoading={isLoading}
@@ -141,7 +166,7 @@ export default function Categories() {
 
         {/* Create/Edit Dialog */}
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {selectedCategory ? 'แก้ไขหมวดหมู่' : 'เพิ่มหมวดหมู่ใหม่'}

@@ -54,6 +54,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -66,6 +67,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  autoComplete="current-password"
                   className="pr-10"
                 />
                 <Button
@@ -74,6 +76,7 @@ export default function Login() {
                   size="icon"
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>

@@ -15,12 +15,12 @@ import type { TransactionType } from '@/types/database.types'
 
 interface TransactionFilterProps {
   filters: TransactionFilters
-  onFiltersChange: (filters: TransactionFilters) => void
+  onFilterChange: (filters: TransactionFilters) => void
 }
 
 export function TransactionFilter({
   filters,
-  onFiltersChange,
+  onFilterChange,
 }: TransactionFilterProps) {
   const { accounts } = useAccounts()
   const { categories } = useCategories()
@@ -32,7 +32,7 @@ export function TransactionFilter({
     filters.search
 
   const handleClearFilters = () => {
-    onFiltersChange({})
+    onFilterChange({})
   }
 
   return (
@@ -42,10 +42,11 @@ export function TransactionFilter({
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="ค้นหารายการ..."
+          aria-label="ค้นหารายการ"
           className="pl-9"
           value={filters.search || ''}
           onChange={(e) =>
-            onFiltersChange({ ...filters, search: e.target.value || undefined })
+            onFilterChange({ ...filters, search: e.target.value || undefined })
           }
         />
       </div>
@@ -54,13 +55,13 @@ export function TransactionFilter({
       <Select
         value={filters.type || 'all'}
         onValueChange={(value) =>
-          onFiltersChange({
+          onFilterChange({
             ...filters,
             type: value === 'all' ? undefined : (value as TransactionType),
           })
         }
       >
-        <SelectTrigger className="w-[140px]">
+        <SelectTrigger className="w-[140px]" aria-label="กรองตามประเภท">
           <SelectValue placeholder="ประเภท" />
         </SelectTrigger>
         <SelectContent>
@@ -75,13 +76,13 @@ export function TransactionFilter({
       <Select
         value={filters.account_id || 'all'}
         onValueChange={(value) =>
-          onFiltersChange({
+          onFilterChange({
             ...filters,
             account_id: value === 'all' ? undefined : value,
           })
         }
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-[160px]" aria-label="กรองตามบัญชี">
           <SelectValue placeholder="บัญชี" />
         </SelectTrigger>
         <SelectContent>
@@ -98,13 +99,13 @@ export function TransactionFilter({
       <Select
         value={filters.category_id || 'all'}
         onValueChange={(value) =>
-          onFiltersChange({
+          onFilterChange({
             ...filters,
             category_id: value === 'all' ? undefined : value,
           })
         }
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-[160px]" aria-label="กรองตามหมวดหมู่">
           <SelectValue placeholder="หมวดหมู่" />
         </SelectTrigger>
         <SelectContent>

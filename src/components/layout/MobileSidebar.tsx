@@ -21,7 +21,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
             Money Manager
           </SheetTitle>
         </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-5rem)]">
+        <ScrollArea className="h-[calc(100dvh-5rem)]">
           <SidebarNav onNavClick={() => onOpenChange(false)} />
         </ScrollArea>
       </SheetContent>

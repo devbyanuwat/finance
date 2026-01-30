@@ -2,6 +2,7 @@
 export default {
   darkMode: ["class"],
   content: [
+    './index.html',
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
@@ -51,10 +52,22 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         // Custom colors for Money Manager
-        income: "hsl(142, 76%, 36%)", // Green
-        expense: "hsl(0, 84%, 60%)", // Red
-        investment: "hsl(217, 91%, 60%)", // Blue
-        goal: "hsl(280, 67%, 55%)", // Purple
+        income: {
+          DEFAULT: "hsl(142, 76%, 36%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
+        expense: {
+          DEFAULT: "hsl(0, 84%, 60%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
+        investment: {
+          DEFAULT: "hsl(217, 91%, 60%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
+        goal: {
+          DEFAULT: "hsl(280, 67%, 55%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

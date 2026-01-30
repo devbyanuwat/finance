@@ -93,7 +93,7 @@ export default function Dashboard() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
+              <div className="text-2xl font-bold tabular-nums">{formatCurrency(totalBalance)}</div>
               <p className="text-xs text-muted-foreground">
                 จาก {accounts.length} บัญชี
               </p>
@@ -106,7 +106,7 @@ export default function Dashboard() {
               <TrendingUp className="h-4 w-4 text-income" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-income">
+              <div className="text-2xl font-bold text-income tabular-nums">
                 {formatCurrency(monthlyIncome)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -121,7 +121,7 @@ export default function Dashboard() {
               <TrendingDown className="h-4 w-4 text-expense" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-expense">
+              <div className="text-2xl font-bold text-expense tabular-nums">
                 {formatCurrency(monthlyExpense)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -137,7 +137,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div
-                className={`text-2xl font-bold ${
+                className={`text-2xl font-bold tabular-nums ${
                   monthlySavings >= 0 ? 'text-income' : 'text-expense'
                 }`}
               >
@@ -175,13 +175,13 @@ export default function Dashboard() {
                     <Bar
                       dataKey="income"
                       name="รายได้"
-                      fill="hsl(142, 76%, 36%)"
+                      fill="hsl(var(--income))"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
                       dataKey="expense"
                       name="รายจ่าย"
-                      fill="hsl(0, 84%, 60%)"
+                      fill="hsl(var(--expense))"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
@@ -215,8 +215,8 @@ export default function Dashboard() {
                         }
                         labelLine={false}
                       >
-                        {categorySpending.map((entry, index) => (
-                          <Cell key={index} fill={entry.color} />
+                        {categorySpending.map((entry) => (
+                          <Cell key={entry.name} fill={entry.color} />
                         ))}
                       </Pie>
                       <Tooltip

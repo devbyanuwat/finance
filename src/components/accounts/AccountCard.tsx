@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { Account, AccountType } from '@/types/database.types'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 interface AccountCardProps {
   account: Account
@@ -47,21 +47,13 @@ const accountTypeConfig: Record<
   },
 }
 
-function formatCurrency(amount: number, currency: string = 'THB') {
-  return new Intl.NumberFormat('th-TH', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  }).format(amount)
-}
-
 export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
   const config = accountTypeConfig[account.type]
   const Icon = config.icon
   const isCreditCard = account.type === 'credit_card'
 
   return (
-    <Card className={cn('relative', !account.is_active && 'opacity-60')}>
+    <Card className={cn('relative hover:shadow-md transition-shadow', !account.is_active && 'opacity-60')}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -104,7 +96,7 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
           </p>
           <p
             className={cn(
-              'text-2xl font-bold',
+              'text-2xl font-bold tabular-nums',
               isCreditCard && account.balance > 0
                 ? 'text-expense'
                 : account.balance >= 0

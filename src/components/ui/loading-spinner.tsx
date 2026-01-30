@@ -14,9 +14,12 @@ export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) 
   }
 
   return (
-    <Loader2
-      className={cn('animate-spin text-muted-foreground', sizeClasses[size], className)}
-    />
+    <div role="status" aria-label="กำลังโหลด">
+      <Loader2
+        aria-hidden="true"
+        className={cn('animate-spin text-muted-foreground', sizeClasses[size], className)}
+      />
+    </div>
   )
 }
 
@@ -26,7 +29,7 @@ interface FullPageLoadingProps {
 
 export function FullPageLoading({ message = 'กำลังโหลด...' }: FullPageLoadingProps) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+    <div role="status" className="flex min-h-screen flex-col items-center justify-center gap-4">
       <LoadingSpinner size="lg" />
       <p className="text-muted-foreground">{message}</p>
     </div>

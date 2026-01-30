@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react'
+import { Component, createRef, type ReactNode } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +14,8 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
+  private errorRef = createRef<HTMLDivElement>()
+
   constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
@@ -21,6 +23,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error }
+  }
+
+  componentDidUpdate(_prevProps: Props, prevState: State) {
+    if (this.state.hasError && !prevState.hasError) {
+      this.errorRef.current?.focus()
+    }
   }
 
   handleReset = () => {
@@ -35,8 +43,8 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="flex min-h-screen items-center justify-center p-4">
-          <Card className="max-w-md">
+        <div role="alert" className="flex min-h-screen items-center justify-center p-4">
+          <Card ref={this.errorRef} tabIndex={-1} className="max-w-md focus:outline-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <AlertTriangle className="h-5 w-5" />

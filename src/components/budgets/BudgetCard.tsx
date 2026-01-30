@@ -18,7 +18,7 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
   const remaining = budget.amount - spent
 
   return (
-    <Card>
+    <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-3">
           {budget.category && (

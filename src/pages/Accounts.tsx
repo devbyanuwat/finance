@@ -20,7 +20,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { AccountList, AccountForm, formatCurrency } from '@/components/accounts'
+import { AccountList, AccountForm } from '@/components/accounts'
+import { formatCurrency } from '@/lib/utils'
 import { useAccounts } from '@/hooks/useAccounts'
 import type { Account } from '@/types/database.types'
 import type { AccountFormData } from '@/lib/validations'
@@ -108,7 +109,7 @@ export default function Accounts() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${totalBalance >= 0 ? 'text-income' : 'text-expense'}`}>
+              <div className={`text-2xl font-bold tabular-nums ${totalBalance >= 0 ? 'text-income' : 'text-expense'}`}>
                 {formatCurrency(totalBalance)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -123,7 +124,7 @@ export default function Accounts() {
               <TrendingUp className="h-4 w-4 text-income" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-income">
+              <div className="text-2xl font-bold text-income tabular-nums">
                 {formatCurrency(totalAssets)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -138,7 +139,7 @@ export default function Accounts() {
               <TrendingDown className="h-4 w-4 text-expense" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-expense">
+              <div className="text-2xl font-bold text-expense tabular-nums">
                 {formatCurrency(totalLiabilities)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -158,7 +159,7 @@ export default function Accounts() {
 
         {/* Create/Edit Dialog */}
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {selectedAccount ? 'แก้ไขบัญชี' : 'เพิ่มบัญชีใหม่'}

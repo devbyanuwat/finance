@@ -154,6 +154,7 @@ export default function Signup() {
                 placeholder="ชื่อของคุณ"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                autoComplete="name"
               />
             </div>
             <div className="space-y-2">
@@ -165,6 +166,7 @@ export default function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -177,6 +179,7 @@ export default function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  autoComplete="new-password"
                   className="pr-20"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
@@ -187,6 +190,7 @@ export default function Signup() {
                     className="h-7 w-7"
                     onClick={handleGeneratePassword}
                     title="สร้างรหัสผ่านแบบสุ่ม"
+                    aria-label="สร้างรหัสผ่านแบบสุ่ม"
                   >
                     <RefreshCw className="h-4 w-4" />
                   </Button>
@@ -196,6 +200,7 @@ export default function Signup() {
                     size="icon"
                     className="h-7 w-7"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -238,6 +243,7 @@ export default function Signup() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  autoComplete="new-password"
                   className="pr-10"
                 />
                 <Button
@@ -246,6 +252,7 @@ export default function Signup() {
                   size="icon"
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>

@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { BudgetForm, BudgetList } from '@/components/budgets'
-import { formatCurrency } from '@/components/accounts'
+import { formatCurrency } from '@/lib/utils'
 import { useBudgets } from '@/hooks/useBudgets'
 import type { BudgetWithCategory } from '@/types/database.types'
 import type { BudgetFormData } from '@/lib/validations'
@@ -112,7 +112,7 @@ export default function Budgets() {
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalBudget)}</div>
+              <div className="text-2xl font-bold tabular-nums">{formatCurrency(totalBudget)}</div>
               <p className="text-xs text-muted-foreground">
                 {budgets.length} หมวดหมู่
               </p>
@@ -125,7 +125,7 @@ export default function Budgets() {
               <PiggyBank className="h-4 w-4 text-expense" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-expense">
+              <div className="text-2xl font-bold text-expense tabular-nums">
                 {formatCurrency(totalSpent)}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -164,7 +164,7 @@ export default function Budgets() {
                 </div>
                 <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary">
                   <div
-                    className={`h-full rounded-full transition-all ${
+                    className={`h-full rounded-full transition-[width] ${
                       usagePercentage > 100
                         ? 'bg-destructive'
                         : usagePercentage > 80
@@ -189,7 +189,7 @@ export default function Budgets() {
 
         {/* Create/Edit Dialog */}
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {selectedBudget ? 'แก้ไขงบประมาณ' : 'สร้างงบประมาณใหม่'}
