@@ -1,0 +1,6 @@
+# Allow all user agents to crawl the site
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://finance-sigma-gilt.vercel.app/sitemap.xml

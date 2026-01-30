@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/dashboard</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/accounts</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/transactions</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/budgets</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://finance-sigma-gilt.vercel.app/categories</loc>
+    <lastmod>2026-01-30</lastmod>
+    <priority>0.70</priority>
+  </url>
+</urlset>
