@@ -14,6 +14,7 @@ const Accounts = lazy(() => import('@/pages/Accounts'))
 const Categories = lazy(() => import('@/pages/Categories'))
 const Transactions = lazy(() => import('@/pages/Transactions'))
 const Budgets = lazy(() => import('@/pages/Budgets'))
+const Reports = lazy(() => import('@/pages/Reports'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 function App() {
@@ -65,6 +66,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Budgets />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute>
+                    <Reports />
                   </ProtectedRoute>
                 }
               />

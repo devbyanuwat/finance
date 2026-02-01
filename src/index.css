@@ -29,6 +29,7 @@
     --expense: 0 84% 60%;
     --investment: 217 91% 60%;
     --goal: 280 67% 55%;
+    --debt: 25 95% 53%;
 
     /* Sidebar */
     --sidebar-bg: 222.2 47.4% 11.2%;
@@ -64,6 +65,7 @@
     --expense: 0 84% 65%;
     --investment: 217 91% 65%;
     --goal: 280 67% 62%;
+    --debt: 25 95% 58%;
 
     /* Sidebar */
     --sidebar-bg: 217.2 32.6% 12%;

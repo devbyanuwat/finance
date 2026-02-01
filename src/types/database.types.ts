@@ -8,6 +8,8 @@ export type CostMethod = 'fifo' | 'lifo' | 'average'
 export type ProductTransactionType = 'purchase' | 'sale'
 export type AssetType = 'stock' | 'crypto' | 'fund' | 'etf' | 'gold' | 'real_estate' | 'other'
 export type InvestmentTransactionType = 'buy' | 'sell' | 'dividend'
+export type DebtType = 'credit_card_installment' | 'credit_card_full' | 'personal_loan'
+export type DebtStatus = 'active' | 'completed' | 'cancelled'
 
 export interface Profile {
   id: string
@@ -60,6 +62,7 @@ export interface Transaction {
   status: TransactionStatus
   is_recurring: boolean
   recurring_rule: RecurringRule | null
+  debt_id: string | null
   created_at: string
 }
 
@@ -148,6 +151,28 @@ export interface InvestmentTransaction {
   created_at: string
 }
 
+export interface Debt {
+  id: string
+  user_id: string
+  name: string
+  debt_type: DebtType
+  total_amount: number
+  monthly_payment: number
+  installment_count: number
+  paid_count: number
+  remaining_amount: number
+  interest_rate: number
+  creditor_name: string | null
+  account_id: string | null
+  category_id: string | null
+  due_day: number | null
+  start_date: string
+  end_date: string | null
+  status: DebtStatus
+  note: string | null
+  created_at: string
+}
+
 // Insert types (without id and created_at)
 export type ProfileInsert = Omit<Profile, 'created_at' | 'updated_at'>
 export type AccountInsert = Omit<Account, 'id' | 'created_at'>
@@ -159,6 +184,8 @@ export type ProductInsert = Omit<Product, 'id' | 'created_at'>
 export type ProductTransactionInsert = Omit<ProductTransaction, 'id' | 'created_at'>
 export type InvestmentInsert = Omit<Investment, 'id' | 'created_at'>
 export type InvestmentTransactionInsert = Omit<InvestmentTransaction, 'id' | 'created_at'>
+export type DebtInsert = Omit<Debt, 'id' | 'created_at'>
+export type DebtUpdate = Partial<Omit<Debt, 'id' | 'user_id' | 'created_at'>>
 
 // Update types (partial, without id)
 export type ProfileUpdate = Partial<Omit<Profile, 'id'>>
@@ -177,6 +204,12 @@ export interface TransactionWithRelations extends Transaction {
   account?: Account
   category?: Category
   to_account?: Account
+  debt?: Debt
+}
+
+export interface DebtWithRelations extends Debt {
+  account?: Account
+  category?: Category
 }
 
 export interface BudgetWithCategory extends Budget {

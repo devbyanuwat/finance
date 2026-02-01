@@ -78,6 +78,10 @@ export default {
           DEFAULT: "hsl(280, 67%, 55%)",
           foreground: "hsl(0, 0%, 100%)",
         },
+        debt: {
+          DEFAULT: "hsl(25, 95%, 53%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

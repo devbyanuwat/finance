@@ -76,3 +76,26 @@ export const budgetSchema = z.object({
 })
 
 export type BudgetFormData = z.infer<typeof budgetSchema>
+
+// Debt validation
+export const debtSchema = z.object({
+  name: z.string().min(1, 'กรุณากรอกชื่อรายการ'),
+  debt_type: z.enum(['credit_card_installment', 'credit_card_full', 'personal_loan']),
+  total_amount: z.number().positive('จำนวนเงินต้องมากกว่า 0'),
+  installment_count: z.number().int().min(1, 'จำนวนงวดต้องมากกว่า 0'),
+  interest_rate: z.number().min(0, 'อัตราดอกเบี้ยต้องไม่น้อยกว่า 0'),
+  creditor_name: z.string().nullable().optional(),
+  account_id: z.string().nullable().optional(),
+  category_id: z.string().nullable().optional(),
+  due_day: z.number().int().min(1).max(31).nullable().optional(),
+  start_date: z.date(),
+  note: z.string().nullable().optional(),
+}).refine((data) => {
+  if (data.debt_type !== 'personal_loan') return !!data.account_id
+  return true
+}, {
+  message: 'กรุณาเลือกบัตรเครดิต',
+  path: ['account_id'],
+})
+
+export type DebtFormData = z.infer<typeof debtSchema>

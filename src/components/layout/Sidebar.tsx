@@ -4,7 +4,7 @@ import { SidebarNav, SidebarBottomNav } from './SidebarNav'
 
 export function Sidebar() {
   return (
-    <aside className="hidden w-[260px] flex-col p-4 md:flex">
+    <aside className="hidden w-[260px] flex-col p-4 md:flex sticky top-0 h-screen">
       <div className="flex h-full flex-col rounded-2xl bg-sidebar shadow-float">
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 pt-6 pb-4">
