@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale'
-import { CalendarIcon, Loader2, ArrowRightLeft, TrendingUp, TrendingDown } from 'lucide-react'
+import { CalendarIcon, Loader2, ArrowRightLeft, TrendingUp, TrendingDown, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Calendar } from '@/components/ui/calendar'
@@ -68,6 +68,7 @@ export function TransactionForm({
       transaction_date: transaction?.transaction_date
         ? new Date(transaction.transaction_date)
         : new Date(),
+      status: (transaction?.status as 'pending' | 'completed' | 'cancelled') || 'completed',
       tags: transaction?.tags || null,
     },
   })
@@ -75,6 +76,11 @@ export function TransactionForm({
   const isSubmitting = form.formState.isSubmitting
   const watchType = form.watch('type')
   const watchAccountId = form.watch('account_id')
+  const watchDate = form.watch('transaction_date')
+  const watchStatus = form.watch('status')
+
+  // Auto-set status to pending if date is in the future
+  const isFutureDate = watchDate && watchDate > new Date()
 
   // Filter categories based on transaction type
   const filteredCategories = categories.filter((cat) => {
@@ -278,16 +284,69 @@ export function TransactionForm({
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date > new Date()}
+                    onSelect={(date) => {
+                      field.onChange(date)
+                      // Auto-set status to pending if future date, completed if past/today
+                      if (date && date > new Date()) {
+                        form.setValue('status', 'pending')
+                      } else if (date && date <= new Date() && watchStatus === 'pending') {
+                        form.setValue('status', 'completed')
+                      }
+                    }}
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
+              {isFutureDate && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  รายการนี้จะถูกบันทึกเป็น "รอ" เนื่องจากเป็นวันที่อนาคต
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Status (only show if editing or if future date) */}
+        {(transaction || isFutureDate) && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>สถานะ</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="pending">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        <span>รอ (ยังไม่ได้รับ/จ่าย)</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="completed">
+                      <span>เสร็จสิ้น (อัปเดตยอดเงินแล้ว)</span>
+                    </SelectItem>
+                    <SelectItem value="cancelled">
+                      <span>ยกเลิก</span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {field.value === 'pending' && 'รายการรอจะไม่อัปเดตยอดเงินในบัญชีจนกว่าจะเปลี่ยนเป็น "เสร็จสิ้น"'}
+                  {field.value === 'completed' && 'รายการเสร็จสิ้นจะอัปเดตยอดเงินในบัญชีทันที'}
+                  {field.value === 'cancelled' && 'รายการที่ยกเลิกจะไม่ส่งผลต่อยอดเงิน'}
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Description */}
         <FormField

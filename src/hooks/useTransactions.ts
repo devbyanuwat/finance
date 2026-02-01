@@ -87,6 +87,7 @@ export function useTransactions(filters?: TransactionFilters) {
         ...data,
         user_id: user.id,
         transaction_date: data.transaction_date,
+        status: data.status || 'completed',
       })
       .select(`
         *,
@@ -98,16 +99,20 @@ export function useTransactions(filters?: TransactionFilters) {
 
     if (error) throw error
 
-    // Update account balances
-    await updateAccountBalances(data.type, data.account_id, data.to_account_id ?? null, data.amount, 'add')
+    // Only update account balances if status is 'completed'
+    if (newTransaction.status === 'completed') {
+      await updateAccountBalances(data.type, data.account_id, data.to_account_id ?? null, data.amount, 'add')
+    }
 
     setTransactions((prev) => [newTransaction, ...prev])
     return newTransaction
   }
 
   const updateTransaction = async (id: string, oldData: Transaction, newData: TransactionUpdate) => {
-    // First revert old transaction effect on balances
-    await updateAccountBalances(oldData.type, oldData.account_id, oldData.to_account_id, oldData.amount, 'remove')
+    // Revert old transaction effect on balances only if it was completed
+    if (oldData.status === 'completed') {
+      await updateAccountBalances(oldData.type, oldData.account_id, oldData.to_account_id, oldData.amount, 'remove')
+    }
 
     const { data: updated, error } = await supabase
       .from('transactions')
@@ -123,14 +128,17 @@ export function useTransactions(filters?: TransactionFilters) {
 
     if (error) throw error
 
-    // Apply new transaction effect on balances
-    await updateAccountBalances(
-      newData.type || oldData.type,
-      newData.account_id || oldData.account_id,
-      newData.to_account_id ?? oldData.to_account_id,
-      newData.amount || oldData.amount,
-      'add'
-    )
+    // Apply new transaction effect on balances only if status is 'completed'
+    const newStatus = newData.status ?? oldData.status
+    if (newStatus === 'completed') {
+      await updateAccountBalances(
+        newData.type || oldData.type,
+        newData.account_id || oldData.account_id,
+        newData.to_account_id ?? oldData.to_account_id,
+        newData.amount || oldData.amount,
+        'add'
+      )
+    }
 
     setTransactions((prev) =>
       prev.map((t) => (t.id === id ? updated : t))
@@ -143,14 +151,16 @@ export function useTransactions(filters?: TransactionFilters) {
 
     if (error) throw error
 
-    // Revert balance changes
-    await updateAccountBalances(
-      transaction.type,
-      transaction.account_id,
-      transaction.to_account_id,
-      transaction.amount,
-      'remove'
-    )
+    // Revert balance changes only if transaction was completed
+    if (transaction.status === 'completed') {
+      await updateAccountBalances(
+        transaction.type,
+        transaction.account_id,
+        transaction.to_account_id,
+        transaction.amount,
+        'remove'
+      )
+    }
 
     setTransactions((prev) => prev.filter((t) => t.id !== transaction.id))
   }
@@ -204,16 +214,19 @@ export function useTransactions(filters?: TransactionFilters) {
     }
   }
 
-  // Summary calculations
+  // Summary calculations (only count completed transactions)
   const totalIncome = transactions
-    .filter((t) => t.type === 'income')
+    .filter((t) => t.type === 'income' && t.status === 'completed')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
+    .filter((t) => t.type === 'expense' && t.status === 'completed')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const netAmount = totalIncome - totalExpense
+
+  // Pending transactions count
+  const pendingCount = transactions.filter((t) => t.status === 'pending').length
 
   return {
     transactions,
@@ -222,6 +235,7 @@ export function useTransactions(filters?: TransactionFilters) {
     totalIncome,
     totalExpense,
     netAmount,
+    pendingCount,
     fetchTransactions,
     createTransaction,
     updateTransaction,

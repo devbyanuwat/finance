@@ -52,6 +52,7 @@ export const transactionSchema = z.object({
   description: z.string().nullable().optional(),
   note: z.string().nullable().optional(),
   transaction_date: z.date(),
+  status: z.enum(['pending', 'completed', 'cancelled']),
   tags: z.array(z.string()).nullable().optional(),
 }).refine((data) => {
   if (data.type === 'transfer' && !data.to_account_id) {

@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Pencil, Trash2, MoreVertical } from 'lucide-react'
+import { ArrowRightLeft, Pencil, Trash2, MoreVertical, Clock, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Badge } from '@/components/ui/badge'
 import { CategoryIcon } from '@/components/categories'
 import { formatCurrency } from '@/components/accounts'
 import type { TransactionWithRelations } from '@/types/database.types'
@@ -32,9 +33,30 @@ export function TransactionCard({
   }
 
   const getAmountColor = () => {
+    if (transaction.status === 'cancelled') return 'text-muted-foreground line-through'
     if (isIncome) return 'text-income'
     if (isExpense) return 'text-expense'
     return 'text-blue-500'
+  }
+
+  const getStatusBadge = () => {
+    if (transaction.status === 'pending') {
+      return (
+        <Badge variant="outline" className="gap-1 text-xs">
+          <Clock className="h-3 w-3" />
+          รอ
+        </Badge>
+      )
+    }
+    if (transaction.status === 'cancelled') {
+      return (
+        <Badge variant="outline" className="gap-1 text-xs text-muted-foreground">
+          <XCircle className="h-3 w-3" />
+          ยกเลิก
+        </Badge>
+      )
+    }
+    return null
   }
 
   return (
@@ -71,9 +93,12 @@ export function TransactionCard({
 
         {/* Info */}
         <div>
-          <p className="font-medium">
-            {transaction.description || transaction.category?.name || 'ไม่มีรายละเอียด'}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className={cn('font-medium', transaction.status === 'cancelled' && 'line-through text-muted-foreground')}>
+              {transaction.description || transaction.category?.name || 'ไม่มีรายละเอียด'}
+            </p>
+            {getStatusBadge()}
+          </div>
           <p className="text-sm text-muted-foreground">
             {isTransfer ? (
               <>

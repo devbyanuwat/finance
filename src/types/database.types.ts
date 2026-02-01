@@ -1,5 +1,6 @@
 export type AccountType = 'cash' | 'bank' | 'credit_card' | 'e_wallet'
 export type TransactionType = 'income' | 'expense' | 'transfer'
+export type TransactionStatus = 'pending' | 'completed' | 'cancelled'
 export type CategoryType = 'income' | 'expense'
 export type BudgetPeriod = 'monthly' | 'yearly'
 export type GoalPriority = 'high' | 'medium' | 'low'
@@ -56,6 +57,7 @@ export interface Transaction {
   tags: string[] | null
   receipt_url: string | null
   transaction_date: string
+  status: TransactionStatus
   is_recurring: boolean
   recurring_rule: RecurringRule | null
   created_at: string
