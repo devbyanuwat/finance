@@ -149,6 +149,7 @@ export default function Transactions() {
         is_recurring: false,
         recurring_rule: null,
         receipt_url: null,
+        debt_id: null,
       }
 
       if (selectedTransaction) {

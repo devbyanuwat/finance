@@ -29,6 +29,7 @@
     --expense: 0 84% 60%;
     --investment: 217 91% 60%;
     --goal: 280 67% 55%;
+    --debt: 25 95% 53%;
 
     /* Sidebar */
     --sidebar-bg: 222.2 47.4% 11.2%;
@@ -41,7 +42,8 @@
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    /* Slightly lighter than background so cards stand out in dark theme */
+    --card: 217.2 32.6% 11%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
@@ -63,6 +65,7 @@
     --expense: 0 84% 65%;
     --investment: 217 91% 65%;
     --goal: 280 67% 62%;
+    --debt: 25 95% 58%;
 
     /* Sidebar */
     --sidebar-bg: 217.2 32.6% 12%;
@@ -77,6 +80,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -84,6 +88,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

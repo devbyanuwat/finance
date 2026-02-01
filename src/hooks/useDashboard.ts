@@ -54,6 +54,7 @@ export function useDashboard() {
       const now = new Date()
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      const trendStart = new Date(now.getFullYear(), now.getMonth() - 5, 1)
 
       // Fetch all data in parallel
       const [
@@ -61,6 +62,7 @@ export function useDashboard() {
         transactionsRes,
         monthlyTransactionsRes,
         budgetsRes,
+        trendRes,
       ] = await Promise.all([
         // All accounts
         supabase
@@ -89,6 +91,7 @@ export function useDashboard() {
             category:categories(*)
           `)
           .eq('user_id', user.id)
+          .eq('status', 'completed')
           .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
           .lte('transaction_date', endOfMonth.toISOString().split('T')[0]),
         // Budgets with categories
@@ -99,17 +102,27 @@ export function useDashboard() {
             category:categories(*)
           `)
           .eq('user_id', user.id),
+        // Last 6 months trend (single query instead of 6)
+        supabase
+          .from('transactions')
+          .select('type, amount, transaction_date, status')
+          .eq('user_id', user.id)
+          .eq('status', 'completed')
+          .gte('transaction_date', trendStart.toISOString().split('T')[0])
+          .lte('transaction_date', endOfMonth.toISOString().split('T')[0]),
       ])
 
       if (accountsRes.error) throw accountsRes.error
       if (transactionsRes.error) throw transactionsRes.error
       if (monthlyTransactionsRes.error) throw monthlyTransactionsRes.error
       if (budgetsRes.error) throw budgetsRes.error
+      if (trendRes.error) throw trendRes.error
 
       const accounts = accountsRes.data || []
       const recentTransactions = transactionsRes.data || []
       const monthlyTransactions = monthlyTransactionsRes.data || []
       const budgets = budgetsRes.data || []
+      const trendTransactions = trendRes.data || []
 
       // Calculate totals
       const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0)
@@ -151,27 +164,26 @@ export function useDashboard() {
         }
       }
 
-      // Fetch last 6 months trend
+      // Build 6-month trend from single query result
+      const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
       const monthlyTrend: MonthlyData[] = []
       for (let i = 5; i >= 0; i--) {
         const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
         const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0)
+        const startStr = monthDate.toISOString().split('T')[0]
+        const endStr = monthEnd.toISOString().split('T')[0]
 
-        const { data: monthData } = await supabase
-          .from('transactions')
-          .select('type, amount')
-          .eq('user_id', user.id)
-          .gte('transaction_date', monthDate.toISOString().split('T')[0])
-          .lte('transaction_date', monthEnd.toISOString().split('T')[0])
+        const monthTransactions = trendTransactions.filter((t) => {
+          return t.transaction_date >= startStr && t.transaction_date <= endStr
+        })
 
-        const income = (monthData || [])
+        const income = monthTransactions
           .filter((t) => t.type === 'income')
           .reduce((sum, t) => sum + t.amount, 0)
-        const expense = (monthData || [])
+        const expense = monthTransactions
           .filter((t) => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0)
 
-        const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
         monthlyTrend.push({
           month: monthNames[monthDate.getMonth()],
           income,

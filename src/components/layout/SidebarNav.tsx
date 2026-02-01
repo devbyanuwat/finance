@@ -6,6 +6,7 @@ import {
   PiggyBank,
   BarChart3,
   Tags,
+  Landmark,
   LogOut,
   type LucideIcon,
 } from 'lucide-react'
@@ -45,6 +46,11 @@ const navItems: NavItem[] = [
     title: 'งบประมาณ',
     href: '/budgets',
     icon: PiggyBank,
+  },
+  {
+    title: 'หนี้สิน',
+    href: '/debts',
+    icon: Landmark,
   },
   {
     title: 'รายงาน',

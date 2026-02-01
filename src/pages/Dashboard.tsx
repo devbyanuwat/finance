@@ -44,6 +44,8 @@ export default function Dashboard() {
     categorySpending,
     accounts,
     isLoading,
+    error,
+    refetch,
   } = useDashboard()
 
   const formatChartValue = (value: number) => {
@@ -51,6 +53,8 @@ export default function Dashboard() {
     if (value >= 1000) return `${(value / 1000).toFixed(0)}K`
     return value.toString()
   }
+
+  const hasNoData = accounts.length === 0 && recentTransactions.length === 0
 
   if (isLoading) {
     return (
@@ -66,6 +70,21 @@ export default function Dashboard() {
             <Skeleton className="col-span-2 h-80" />
             <Skeleton className="h-80" />
           </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
+          <h2 className="text-lg font-semibold">ไม่สามารถโหลดข้อมูลได้</h2>
+          <p className="text-sm text-muted-foreground mt-1 mb-4">{error}</p>
+          <Button onClick={refetch} variant="outline">
+            ลองใหม่
+          </Button>
         </div>
       </DashboardLayout>
     )
@@ -92,8 +111,29 @@ export default function Dashboard() {
           </Button>
         </div>
 
+        {/* Onboarding state for new users */}
+        {hasNoData && (
+          <Card>
+            <CardContent className="flex flex-col items-center text-center py-12">
+              <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
+              <h2 className="text-lg font-semibold">เริ่มต้นใช้งาน</h2>
+              <p className="text-sm text-muted-foreground mt-1 mb-6 max-w-md">
+                เพิ่มบัญชีและรายการแรกของคุณเพื่อเริ่มติดตามการเงิน
+              </p>
+              <div className="flex gap-3">
+                <Button asChild>
+                  <Link to="/accounts">เพิ่มบัญชี</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to="/transactions">เพิ่มรายการ</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Row 1: Balance + Stats + Accounts */}
-        <div className="grid gap-4 md:grid-cols-3">
+        {!hasNoData && <div className="grid gap-4 md:grid-cols-3">
           {/* Balance Card (dark bg) */}
           <Card className="bg-primary text-primary-foreground">
             <CardHeader className="pb-2">
@@ -197,10 +237,10 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div>}
 
         {/* Row 2: AreaChart (2/3) + PieChart (1/3) */}
-        <div className="grid gap-4 md:grid-cols-3">
+        {!hasNoData && <div className="grid gap-4 md:grid-cols-3">
           {/* Monthly Trend AreaChart */}
           <Card className="md:col-span-2">
             <CardHeader>
@@ -308,10 +348,10 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div>}
 
         {/* Row 3: Budget Alerts + Recent Transactions */}
-        <div className="grid gap-4 md:grid-cols-2">
+        {!hasNoData && <div className="grid gap-4 md:grid-cols-2">
           {/* Budget Alerts */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -437,7 +477,7 @@ export default function Dashboard() {
               )}
             </CardContent>
           </Card>
-        </div>
+        </div>}
       </div>
     </DashboardLayout>
   )
