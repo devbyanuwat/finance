@@ -19,9 +19,9 @@ const debtTypeConfig = {
 }
 
 const debtStatusConfig = {
-  active: { label: 'กำลังชำระ', className: '' },
-  completed: { label: 'ชำระครบแล้ว', className: 'bg-income/10 text-income border-income/20' },
-  cancelled: { label: 'ยกเลิก', variant: 'destructive' as const },
+  active: { label: 'กำลังชำระ', variant: 'outline' as const, className: '' },
+  completed: { label: 'ชำระครบแล้ว', variant: 'outline' as const, className: 'bg-income/10 text-income border-income/20' },
+  cancelled: { label: 'ยกเลิก', variant: 'destructive' as const, className: '' },
 }
 
 interface DebtCardProps {
@@ -77,7 +77,7 @@ export function DebtCard({ debt, onEdit, onDelete, onConvert }: DebtCardProps) {
             {typeConfig.label}
           </Badge>
           <Badge
-            variant={statusConfig.variant || 'outline'}
+            variant={statusConfig.variant}
             className={statusConfig.className}
           >
             {statusConfig.label}

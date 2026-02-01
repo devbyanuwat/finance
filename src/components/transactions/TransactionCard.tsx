@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Pencil, Trash2, MoreVertical, Clock, XCircle } from 'lucide-react'
+import { ArrowRightLeft, Pencil, Trash2, MoreVertical, Clock, XCircle, Landmark } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -98,6 +98,12 @@ export function TransactionCard({
               {transaction.description || transaction.category?.name || 'ไม่มีรายละเอียด'}
             </p>
             {getStatusBadge()}
+            {transaction.debt && (
+              <Badge variant="outline" className="gap-1 text-xs text-debt border-debt/30">
+                <Landmark className="h-3 w-3" />
+                {transaction.debt.name}
+              </Badge>
+            )}
           </div>
           <p className="text-sm text-muted-foreground">
             {isTransfer ? (

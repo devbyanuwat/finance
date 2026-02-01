@@ -38,7 +38,6 @@ export default function Debts() {
     upcomingPayments,
     createDebt,
     updateDebt,
-    cancelDebt,
     deleteDebt,
     convertToInstallment,
     fetchDebts,

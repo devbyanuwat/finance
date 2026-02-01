@@ -32,7 +32,8 @@ export function useTransactions(filters?: TransactionFilters) {
           *,
           account:accounts!account_id(*),
           category:categories(*),
-          to_account:accounts!to_account_id(*)
+          to_account:accounts!to_account_id(*),
+          debt:debts(*)
         `)
         .eq('user_id', user.id)
         .order('transaction_date', { ascending: false })
@@ -93,7 +94,8 @@ export function useTransactions(filters?: TransactionFilters) {
         *,
         account:accounts!account_id(*),
         category:categories(*),
-        to_account:accounts!to_account_id(*)
+        to_account:accounts!to_account_id(*),
+        debt:debts(*)
       `)
       .single()
 
@@ -122,7 +124,8 @@ export function useTransactions(filters?: TransactionFilters) {
         *,
         account:accounts!account_id(*),
         category:categories(*),
-        to_account:accounts!to_account_id(*)
+        to_account:accounts!to_account_id(*),
+        debt:debts(*)
       `)
       .single()
 

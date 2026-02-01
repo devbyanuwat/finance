@@ -18,6 +18,13 @@ interface CategoryBreakdown {
   color: string
 }
 
+interface DebtSummary {
+  totalDebt: number
+  monthlyObligation: number
+  activeCount: number
+  completedCount: number
+}
+
 interface ReportData {
   totalIncome: number
   totalExpense: number
@@ -28,6 +35,7 @@ interface ReportData {
   accounts: Account[]
   totalBalance: number
   transactionCount: number
+  debtSummary: DebtSummary
 }
 
 const initialData: ReportData = {
@@ -40,6 +48,7 @@ const initialData: ReportData = {
   accounts: [],
   totalBalance: 0,
   transactionCount: 0,
+  debtSummary: { totalDebt: 0, monthlyObligation: 0, activeCount: 0, completedCount: 0 },
 }
 
 const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
@@ -105,7 +114,7 @@ export function useReports(period: ReportPeriod) {
 
       const { startDate, endDate } = getDateRange(period)
 
-      const [transactionsRes, accountsRes] = await Promise.all([
+      const [transactionsRes, accountsRes, debtsRes] = await Promise.all([
         supabase
           .from('transactions')
           .select(`
@@ -121,10 +130,16 @@ export function useReports(period: ReportPeriod) {
           .select('*')
           .eq('user_id', user.id)
           .eq('is_active', true),
+        supabase
+          .from('debts')
+          .select('*')
+          .eq('user_id', user.id),
       ])
 
       if (transactionsRes.error) throw transactionsRes.error
       if (accountsRes.error) throw accountsRes.error
+      // debts query may fail if table doesn't exist yet (migration not applied)
+      const debts = debtsRes.data || []
 
       const transactions = transactionsRes.data || []
       const accounts = accountsRes.data || []
@@ -196,6 +211,16 @@ export function useReports(period: ReportPeriod) {
         return sum + acc.balance
       }, 0)
 
+      // Debt summary
+      const activeDebts = debts.filter((d) => d.status === 'active')
+      const completedDebts = debts.filter((d) => d.status === 'completed')
+      const debtSummary: DebtSummary = {
+        totalDebt: activeDebts.reduce((sum, d) => sum + d.remaining_amount, 0),
+        monthlyObligation: activeDebts.reduce((sum, d) => sum + d.monthly_payment, 0),
+        activeCount: activeDebts.length,
+        completedCount: completedDebts.length,
+      }
+
       setData({
         totalIncome,
         totalExpense,
@@ -206,6 +231,7 @@ export function useReports(period: ReportPeriod) {
         accounts,
         totalBalance,
         transactionCount: transactions.length,
+        debtSummary,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด')

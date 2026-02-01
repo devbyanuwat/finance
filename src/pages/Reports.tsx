@@ -6,6 +6,7 @@ import {
   Wallet,
   BarChart3,
   FileText,
+  Landmark,
 } from 'lucide-react'
 import {
   BarChart,
@@ -69,6 +70,7 @@ export default function Reports() {
     accounts,
     totalBalance,
     transactionCount,
+    debtSummary,
     isLoading,
     error,
     refetch,
@@ -388,6 +390,41 @@ export default function Reports() {
                   </TableRow>
                 </TableFooter>
               </Table>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Debt Summary */}
+        {(debtSummary.activeCount > 0 || debtSummary.completedCount > 0) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Landmark className="h-5 w-5 text-debt" />
+                สรุปหนี้สิน
+              </CardTitle>
+              <CardDescription>
+                ภาพรวมหนี้สินทั้งหมด
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-xl bg-muted/50 p-4">
+                  <p className="text-sm text-muted-foreground">หนี้คงค้าง</p>
+                  <p className="text-xl font-bold text-debt tabular-nums">{formatCurrency(debtSummary.totalDebt)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/50 p-4">
+                  <p className="text-sm text-muted-foreground">ยอดชำระ/เดือน</p>
+                  <p className="text-xl font-bold text-expense tabular-nums">{formatCurrency(debtSummary.monthlyObligation)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/50 p-4">
+                  <p className="text-sm text-muted-foreground">กำลังชำระ</p>
+                  <p className="text-xl font-bold tabular-nums">{debtSummary.activeCount} รายการ</p>
+                </div>
+                <div className="rounded-xl bg-muted/50 p-4">
+                  <p className="text-sm text-muted-foreground">ชำระครบแล้ว</p>
+                  <p className="text-xl font-bold text-income tabular-nums">{debtSummary.completedCount} รายการ</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
